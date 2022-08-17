@@ -38,21 +38,28 @@ Route::post('/ppal/tareas/editar/{id}',[TareasController::class,'save']);
 //FIN DE LO QUE CAMBIAR
 
 Route::get('/ppal/distribucion',[DistribucionController::class,'index']);
+Route::get('/ppal/distribucion/grilla',[DistribucionController::class,'show']);
+Route::get('/ppal/distribucion/grilla_armar',[DistribucionController::class,'armar_calendario']);
 Route::get('/ppal/distribucion/nuevo',[DistribucionController::class,'index_create']);
 Route::post('/ppal/distribucion/nuevo',[DistribucionController::class,'create']);
 Route::get('/ppal/distribucion/borrar/{id}',[DistribucionController::class,'delete']);
 Route::get('/ppal/distribucion/editar/{id}',[DistribucionController::class,'edit']);
 Route::post('/ppal/distribucion/editar/{id}',[DistribucionController::class,'save']);
+Route::post('/ppal/distribucion/coutome',[DistribucionController::class,'coutome']);
+
 
 Route::get('/ppal/notas',[NotasController::class,'index']);
 Route::get('/ppal/notas/{id}',[NotasController::class,'show']);
-
+Route::post('/ppal/notas/coutome',[NotasController::class,'coutome']);
 Route::get('/ppal/config',[ConfigController::class,'index']);
 Route::post('/ppal/config',[ConfigController::class,'save']);
 Route::get('/ppal/qr',[ConfigController::class,'qr_access']);
 Route::get('/ppal/revision',[RevisionController::class,'index']);
 Route::get('/ppal/revision/ver/{id}',[RevisionController::class,'show']);
+
+Route::post('/ppal/revision_coutomer',[RevisionController::class,'customer']);
 Route::get('/ppal/informe',[InformeController::class,'index']);
+Route::post('/ppal/informe',[InformeController::class,'index_coutome']);
 Route::get('salir',[LoginController::class,'logout']);
 
 Route::get('/clear-cache', function() {

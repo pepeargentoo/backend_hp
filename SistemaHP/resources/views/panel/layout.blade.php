@@ -21,6 +21,9 @@
   <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script> 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="{{url('lib/main.css')}}" rel="stylesheet" />
+  <script src="{{url('lib/main.js')}}" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"></script>
   <style>
    .card .card-stats {
     border: 0;
@@ -158,7 +161,7 @@
       <div class="collapse navbar-collapse">
        <ul class="nav navbar-nav navbar-right">
         <li>
-         <a href="/ppal/config">
+         <a href="{{url('ppal/config')}}">
           <i class="pe-7s-tools" style="font-size: 22px; font-weight: bold;"></i>
          </a>
         </li>

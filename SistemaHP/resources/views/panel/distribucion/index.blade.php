@@ -6,6 +6,26 @@
   <span>{{session('mensaje')}}</span>
  </div>
  @endif
+ <form method="POST" action="{{url('ppal/distribucion/coutome')}}">
+  @csrf
+  <div class="row">
+   <div class="col-md-10 px-1">
+    <div class="form-group">
+     <label>Empleada</label>
+     <select class="form-select form-control" aria-label="Default select example" name="id_empleada" required="">
+      <option value="" disabled>Seleccione una empleada</option>
+      @foreach($empleadas as $emp)
+      <option value="{{$emp->id}}" @if(isset($id_empleada)) @if($id_empleada == $emp->id) selected="selected" @endif @endif >{{$emp->apellido}},{{$emp->nombre}}</option>
+      @endforeach
+     </select>
+    </div>
+   </div>
+   <div class="col-md-2">
+    <input type="submit" name="" value="Buscar" class="btn btn-fill btn-rose ripple-container" style="width: 100%; margin-top: 26px; float: right; margin-bottom: 21px;" />
+   </div>
+  </div>
+ </form>
+
  <a href="{{url('ppal/distribucion/nuevo')}}" class="btn btn-fill btn-rose ripple-container" style="float: right; margin-bottom: 10px;">Nuevo</a>
  <table id="example" class="display">
   <thead>
@@ -46,9 +66,15 @@
   </tfoot>
  </table>
 </div>
+<br clear="all" />
+
 <script>
  $(document).ready(function () {
-  $("#example").DataTable();
+  $("#example").DataTable({
+    "language": {
+      "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+    }
+  });
  });
  $(".borrarempledas").click(function (e) {
   e.preventDefault();
@@ -74,8 +100,8 @@
     if (result.value) {
      console.log("es confirmado");
      borrar = $(this).parent().parent();
-     
-     url_borrar="{{url('ppal/distribucion/borrar')}}"+'/'+$(this).data("id")
+
+     url_borrar = "{{url('ppal/distribucion/borrar')}}" + "/" + $(this).data("id");
      $.get(url_borrar, function (res) {
       if (res.status == "success") {
        console.log("lo borro");

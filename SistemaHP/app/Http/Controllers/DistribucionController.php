@@ -11,9 +11,33 @@ use Illuminate\Support\Facades\Session;
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 class DistribucionController extends Controller
 {
-    //
+    
     public function index(){
-        $turnos = Turnos::where('borrado','no')->get();
+        $empleadas = User::where('rol','empleada')
+        ->where('borrado','no')->get(); 
+        $turnos = $this->get_data();
+        return view('panel.distribucion.index',compact('turnos','empleadas'));
+    }
+
+
+
+    public function coutome(){
+        $datos = request()->all();
+        $empleadas = User::where('rol','empleada')
+        ->where('borrado','no')->get(); 
+        $turnos = $this->get_data($datos['id_empleada']);
+        $id_empleada = $datos['id_empleada'];
+        return view('panel.distribucion.index',compact('turnos','empleadas','id_empleada'));   
+    }
+
+    private function get_data($usuario=null){
+        if($usuario == null){
+            $turnos = Turnos::where('borrado','no')->orderBy('hora_inicio')->get();    
+        }else{
+            $turnos = Turnos::where('borrado','no')->orderBy('hora_inicio')
+            ->where('id_empleada',$usuario)->get();
+        }
+        
         $dias = $this->get_week();
         foreach($turnos as $t){
             $t->dia = $dias[$t->dia];
@@ -23,9 +47,30 @@ class DistribucionController extends Controller
             }else{
                 $t['empleada'] = $empleada['apellido'].', '.$empleada['nombre'];
             }
-        } 
-        return view('panel.distribucion.index',compact('turnos'));
+        }
+        return $turnos;
     }
+
+    public function show(){  
+        return view('panel.distribucion.show');
+     }
+    public function armar_calendario(){
+        $turnos = Turnos::all();
+        foreach($turnos as $s){
+            $empleada = User::find($s->id_empleada);
+            if($empleada == null){
+                $s['empleada'] = '';
+            }else{
+                $s['empleada'] = $empleada['apellido'].', '.$empleada['nombre'];
+            }
+        }
+        
+        return $turnos;
+    }
+
+
+
+
 
     public function index_create()
     {   
@@ -112,7 +157,7 @@ class DistribucionController extends Controller
             return array('status'=>'faild');
         }
         $tareas_turnos = TareasTurnos::where('turnos',$id)->update(['turnos' => null]);
-        $turno->borrado='no';
+        $turno->borrado='si';
         $turno->save();
 
         return array('status'=>'success');

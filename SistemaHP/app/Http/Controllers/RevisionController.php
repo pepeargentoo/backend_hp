@@ -12,18 +12,7 @@ class RevisionController extends Controller
 {
     public function index(){
         $notas= [];
-        $turnos_t = TareasTurnos::all();
-        foreach($turnos_t as $t){
-            if($t->turnos == null){
-                $t['empleada'] = "Sin Asignar";
-            }else{
-                $turno = Turnos::find($t->turnos);
-                $empleada = User::find($turno->id_empleada);
-                $t['empleada'] = $empleada->apellido.','.$empleada->nombre;
-            }
-            $tarea = Tareas::find($t->tarea);
-            $t['tareanombre'] = $tarea->nombre;   
-        }
+        $turnos_t = $this->get_data();
         return view('panel.revision.index',compact('turnos_t'));
     }
 
@@ -39,5 +28,38 @@ class RevisionController extends Controller
         $tarea = Tareas::find($tarea_detalle->tarea);
         $tarea_detalle['tareanombre'] = $tarea->nombre; 
         return view('panel.revision.show',compact('tarea_detalle'));
+    }
+
+    public function customer(){
+        $datos= request()->all();
+        if($datos['date']==null){
+            $turnos_t = $this->get_data();
+        }else{
+            $turnos_t = $this->get_data($datos['date']);
+        }
+        $fecha = $datos['date'];
+        return view('panel.revision.index',compact('turnos_t','fecha'));
+    }
+
+
+    private function get_data($fecha=null){
+        if($fecha == null){
+            $turnos_t = TareasTurnos::where('borrado','no')->get();
+        }else{
+            $turnos_t = TareasTurnos::whereDate('fecha_realizacion',$fecha)
+            ->where('borrado','no')->get();
+        }
+        foreach($turnos_t as $t){
+            if($t->turnos == null){
+                $t['empleada'] = "Sin Asignar";
+            }else{
+                $turno = Turnos::find($t->turnos);
+                $empleada = User::find($turno->id_empleada);
+                $t['empleada'] = $empleada->apellido.','.$empleada->nombre;
+            }
+            $tarea = Tareas::find($t->tarea);
+            $t['tareanombre'] = $tarea->nombre;   
+        }
+        return $turnos_t;
     }
 }

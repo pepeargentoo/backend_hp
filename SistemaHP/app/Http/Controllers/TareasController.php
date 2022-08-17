@@ -46,10 +46,12 @@ class TareasController extends Controller
         $fecha_fin = Carbon::createFromFormat('Y-m-d', $fecha_sup);
         $fecha_ini = Carbon::createFromFormat('Y-m-d', $fecha_inf);
         $diff = $fecha_fin->diffInDays($fecha_ini);
+        
         for ($i = 0;$i <= $diff;$i += $ndias)
         {
             $turnos_id = $this->get_turns($fecha_ini, $datos['hora_inicio']);
-            if ($turnos_id == - 1)
+            
+            if ($turnos_id == -1)
             {
                 TareasTurnos::create(array(
                     'turnos' => null,
@@ -62,12 +64,13 @@ class TareasController extends Controller
             else
             {
                 $t = TareasTurnos::create(array(
-                    'turnos' => $turnos_id,
-                    'tarea' => $tarea_id,
-                    'dia' => $fecha_ini->format('l') ,
-                    'estado' => 'pendiente',
-                    'fecha_realizacion' => $fecha_ini
-                ));
+                        'turnos' => $turnos_id,
+                        'tarea' => $tarea_id,
+                        'dia' => $fecha_ini->format('l') ,
+                        'estado' => 'pendiente',
+                        'fecha_realizacion' => $fecha_ini
+                    ));
+                
             }
             $fecha_ini = $fecha_ini->addDays($ndias);
         }
@@ -164,7 +167,7 @@ class TareasController extends Controller
         {
             return -1;
         }
-        $id = 0;
+        $id = -1;
         foreach ($turnos as $t)
         {
             if ($hora >= $t->hora_inicio && $t->fin <= $hora)

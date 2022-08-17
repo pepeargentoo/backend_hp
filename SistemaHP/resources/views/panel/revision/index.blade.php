@@ -5,11 +5,25 @@
   <span>{{session('mensaje')}}</span>
  </div>
  @endif
-  <table id="example" class="display">
+ <form method="POST" action="{{url('ppal/revision_coutomer')}}">
+  @csrf
+  <div class="row">
+   <div class="col-md-10 px-1">
+    <div class="form-group">
+     <label>FECHA</label>
+     <input type="date" class="form-control" placeholder="Nombre" name="date" @if(isset($fecha)) value="{{$fecha}}" @else required="" @endif />
+    </div>
+   </div>
+   <div class="col-md-2">
+    <input type="submit" name="" value="Buscar" class="btn btn-fill btn-rose ripple-container" style="width: 100%; margin-top: 26px; float: right; margin-bottom: 21px;" />
+   </div>
+  </div>
+ </form>
+ <table id="example" class="display">
   <thead>
    <tr>
     <th>Fecha</th>
-     <th>Tarea</th>
+    <th>Tarea</th>
     <th>Empleada</th>
     <th>Estado</th>
     <th>Acciones</th>
@@ -43,7 +57,11 @@
 </div>
 <script>
  $(document).ready(function () {
-  $("#example").DataTable();
+  $("#example").DataTable({
+    "language": {
+      "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+    }
+  });
  });
 </script>
 @endsection

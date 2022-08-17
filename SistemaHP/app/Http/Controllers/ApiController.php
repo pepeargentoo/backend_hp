@@ -8,6 +8,7 @@ use App\Turnos;
 use App\Tareas;
 use App\TareasTurnos;
 use App\Notas;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Mail;
@@ -50,8 +51,7 @@ class ApiController extends Controller
     }
 
     public function tareas($id){
-        $habilitado=Turnos::where('id_empleada',$id)
-        ->where('borrado','no')->where('dia',date('l'))
+        $habilitado=Turnos::where('borrado','no')->where('dia',date('l'))
         ->whereDate('hora_inicio','>=',Carbon::now())
         ->whereDate('hora_fin','<=',Carbon::now())->get();
         $hoy = date('Y-m-d');
@@ -88,9 +88,17 @@ class ApiController extends Controller
 
     public function tareafinalizar(){
         $datos = request()->all();
+        //dd($datos);
         if(!isset($datos['id']) || !isset($datos['id_tarea']) )
             return json_encode(array('success'=>false));
         $tarea = TareasTurnos::find($datos['id_tarea']);
+        $turno = Turnos::find($tarea->id);
+        if($turno->id_empleada != $datos['id']){
+            $tarea->reemplazo = $datos['id'];
+            //dd('reemplazo',$tarea);
+        }
+
+        //dd($tarea);
         $tarea->estado="terminado";
         $tarea->save();
         return json_encode(array('success'=>true));
@@ -111,13 +119,13 @@ class ApiController extends Controller
 
     public function notas_create(){
         $datos = request()->all();
-
-        
         if($datos['tipo']=='urgente'){
-            $emails =['testaplicacionessmtp@gmail.com',];
+            $destinatario = User::find(1);
+            $emails =[$destinatario->email];
+            $destinatario = $destinatario->email;
             Mail::send('template_email',['datos' => $datos ],
-                  function($m) use ($datos,$emails){
-                      $m->from('testaplicacionessmtp@gmail.com', 'Nota del Sistema');
+                  function($m) use ($datos,$emails,$destinatario){
+                      $m->from($destinatario, 'Nota Urgente');
                       $m->to($emails)->subject('Mensaje del sistema');
                   }
             );
@@ -135,10 +143,12 @@ class ApiController extends Controller
             $datos['titulo'] = $n->titulo;
             $datos['descripcion'] = $n->descripcion;
             $datos['fecha'] = $n->fecha;
-            $emails =['testaplicacionessmtp@gmail.com',];
+            //21 hs
+            $encargada  = User::find(1);
+            $emails =[$encargada->email,];
             Mail::send('template_email',['datos' => $datos ],
                   function($m) use ($datos,$emails){
-                      $m->from('testaplicacionessmtp@gmail.com', 'Nota del Sistema');
+                      $m->from($encargada->email, 'Nota normal');
                       $m->to($emails)->subject('Mensaje del sistema');
                   }
             );

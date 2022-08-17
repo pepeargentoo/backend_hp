@@ -9,9 +9,13 @@ class TareasTurnos extends Model
     protected $fillable = [
         'estado',
         'turnos',
-        'tarea', 
+        'tarea',
+        'reemplazo',
         'fecha_realizacion',
         'dia',
         'borrado'
     ];
+
+
+   
 }
